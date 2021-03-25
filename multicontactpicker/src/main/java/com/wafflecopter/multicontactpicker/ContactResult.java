@@ -15,11 +15,7 @@ public class ContactResult implements Parcelable {
 
     private String mContactID;
     private String mDisplayName;
-    private boolean mStarred;
-    private Uri mPhoto;
-    private Uri mThumbnail;
-    private List<String> mEmails = new ArrayList<>();
-    private List<PhoneNumber> mPhoneNumbers = new ArrayList<>();
+    private String mContactInformation;
 
     public String getContactID() {
         return mContactID;
@@ -33,44 +29,20 @@ public class ContactResult implements Parcelable {
         return mDisplayName;
     }
 
-    public boolean isStarred() {
-        return mStarred;
+    public String getContactInformation() {
+        return mContactInformation;
     }
 
-    public Uri getPhoto() {
-        return mPhoto;
-    }
-
-    public Uri getThumbnail() {
-        return mThumbnail;
-    }
-
-    public List<String> getEmails() {
-        return mEmails;
-    }
-
-    public List<PhoneNumber> getPhoneNumbers() {
-        return mPhoneNumbers;
-    }
-
-    public ContactResult(Contact contact){
+    public ContactResult(MultiContact contact){
         this.mContactID = String.valueOf(contact.getId());
         this.mDisplayName = contact.getDisplayName();
-        this.mStarred = contact.isStarred();
-        this.mPhoto = contact.getPhoto();
-        this.mThumbnail = contact.getThumbnail();
-        this.mEmails.clear(); this.mEmails.addAll(contact.getEmails());
-        this.mPhoneNumbers.clear(); this.mPhoneNumbers.addAll(contact.getPhoneNumbers());
+        this.mContactInformation = contact.getContactInformation();
     }
 
     protected ContactResult(Parcel in) {
         this.mContactID = in.readString();
         this.mDisplayName = in.readString();
-        this.mStarred = in.readByte() != 0;
-        this.mPhoto = in.readParcelable(Uri.class.getClassLoader());
-        this.mThumbnail = in.readParcelable(Uri.class.getClassLoader());
-        this.mEmails = in.createStringArrayList();
-        in.readTypedList(this.mPhoneNumbers, PhoneNumber.CREATOR);
+        this.mContactInformation = in.readString();
     }
 
     @Override
@@ -82,11 +54,7 @@ public class ContactResult implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mContactID);
         dest.writeString(this.mDisplayName);
-        dest.writeByte(this.mStarred ? (byte) 1 : (byte) 0);
-        dest.writeParcelable(this.mPhoto, flags);
-        dest.writeParcelable(this.mThumbnail, flags);
-        dest.writeStringList(this.mEmails);
-        dest.writeTypedList(this.mPhoneNumbers);
+        dest.writeString(this.mContactInformation);
     }
 
     @SuppressWarnings("unused")

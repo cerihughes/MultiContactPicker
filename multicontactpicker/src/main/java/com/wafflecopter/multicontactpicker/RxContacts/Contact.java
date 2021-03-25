@@ -17,12 +17,9 @@ public class Contact implements Comparable<Contact> {
     private Uri mThumbnail;
     private List<String> mEmails = new ArrayList<>();
     private List<PhoneNumber> mPhoneNumbers = new ArrayList<>();
-    private boolean isSelected;
-    private int backgroundColor = Color.BLUE;
 
     Contact(long id) {
         this.mId = id;
-        this.backgroundColor = ColorUtils.getRandomMaterialColor();
     }
 
     public long getId() {
@@ -83,22 +80,6 @@ public class Contact implements Comparable<Contact> {
 
     public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
         mPhoneNumbers = phoneNumbers;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
     }
 
     @Override

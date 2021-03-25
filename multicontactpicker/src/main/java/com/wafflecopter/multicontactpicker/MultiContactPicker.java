@@ -159,9 +159,9 @@ public class MultiContactPicker {
         }
     }
 
-    static ArrayList<ContactResult> buildResult(List<Contact> selectedContacts){
+    static ArrayList<ContactResult> buildResult(List<MultiContact> selectedContacts){
         ArrayList<ContactResult> contactResults = new ArrayList<>();
-        for(Contact contact : selectedContacts){
+        for(MultiContact contact : selectedContacts){
             contactResults.add(new ContactResult(contact));
         }
         return contactResults;

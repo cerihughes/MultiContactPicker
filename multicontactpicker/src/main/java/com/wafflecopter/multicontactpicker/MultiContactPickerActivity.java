@@ -24,11 +24,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
@@ -36,7 +40,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     private FastScrollRecyclerView recyclerView;
-    private List<Contact> contactList = new ArrayList<>();
+    private List<MultiContact> contactList = new ArrayList<>();
     private TextView tvSelectAll;
     private TextView tvSelectBtn;
     private TextView tvNoContacts;
@@ -86,7 +90,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         adapter = new MultiContactPickerAdapter(contactList, new MultiContactPickerAdapter.ContactSelectListener() {
             @Override
-            public void onContactSelected(Contact contact, int totalSelectedContacts) {
+            public void onContactSelected(MultiContact contact, int totalSelectedContacts) {
                 updateSelectBarContents(totalSelectedContacts);
                 if(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE){
                     finishPicking();
@@ -169,7 +173,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         if(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE && builder.selectedItems.size() > 0){
             throw new RuntimeException("You must be using MultiContactPicker.CHOICE_MODE_MULTIPLE in order to use setSelectedContacts()");
         }
-        
+
         if (builder.titleText != null) {
             setTitle(builder.titleText);
         }
@@ -208,20 +212,32 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
                         return contact.getDisplayName() != null;
                     }
                 })
-                .subscribe(new Observer<Contact>() {
+                .map(new Function<Contact, List<MultiContact>>() {
+                    @Override
+                    public List<MultiContact> apply(@NonNull Contact contact) throws Exception {
+                        return MultiContactConverter.convert(contact);
+                    }
+                })
+                .flatMap(new Function<List<MultiContact>, ObservableSource<MultiContact>>() {
+                    @Override
+                    public ObservableSource<MultiContact> apply(@NonNull List<MultiContact> o) throws Exception {
+                        return Observable.fromIterable(o);
+                    }
+                })
+                .subscribe(new Observer<MultiContact>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
                     @Override
-                    public void onNext(Contact value) {
+                    public void onNext(MultiContact value) {
                         contactList.add(value);
                         if(builder.selectedItems.contains(value.getId())){
                             adapter.setContactSelected(value.getId());
                         }
-                        Collections.sort(contactList, new Comparator<Contact>() {
+                        Collections.sort(contactList, new Comparator<MultiContact>() {
                             @Override
-                            public int compare(Contact contact, Contact t1) {
+                            public int compare(MultiContact contact, MultiContact t1) {
                                 return contact.getDisplayName().compareToIgnoreCase(t1.getDisplayName());
                             }
                         });
