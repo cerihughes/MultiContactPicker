@@ -63,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == CONTACT_PICKER_REQUEST){
             if(resultCode == RESULT_OK) {
+                results.clear();
                 results.addAll(MultiContactPicker.obtainResult(data));
-                if(results.size() > 0) {
-                    Log.d("MyTag", results.get(0).getDisplayName());
+                for (ContactResult result : results) {
+                    Log.d("MyTag", result.getDisplayName() + " " + result.getContactInformation());
                 }
             } else if(resultCode == RESULT_CANCELED){
                 System.out.println("User closed the picker without selecting items.");

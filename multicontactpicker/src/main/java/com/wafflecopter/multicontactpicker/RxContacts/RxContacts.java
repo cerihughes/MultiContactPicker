@@ -144,7 +144,10 @@ public class RxContacts {
         if(emailCursor != null) {
             int emailDataColumnIndex = emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
             if(emailCursor.moveToFirst()){
-                ColumnMapper.mapEmail(emailCursor, contact, emailDataColumnIndex);
+                while (!emailCursor.isAfterLast()) {
+                    ColumnMapper.mapEmail(emailCursor, contact, emailDataColumnIndex);
+                    emailCursor.moveToNext();
+                }
             }
             emailCursor.close();
         }
